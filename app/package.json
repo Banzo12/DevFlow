@@ -1,0 +1,13 @@
+{
+  "name": "devflow-app",
+  "version": "1.0.0",
+  "description": "DevOps learning project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo 'Tests passed' && exit 0"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

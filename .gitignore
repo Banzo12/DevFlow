@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# AWS / SSH keys — NEVER commit these
+*.pem
+*.key
+*.ppk
+devflow-key.pem
+devflow-admin_credentials.csv
+*credentials*.csv
+.aws/
+
+# Docker
+docker-compose.override.yml
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+
+# Build output
+dist/
+build/
+coverage/

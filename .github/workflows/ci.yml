@@ -1,4 +1,4 @@
-name: CI - Build and Push to Docker Hub
+name: CI/CD - Build, Push, Deploy
 
 on:
   push:
@@ -32,3 +32,41 @@ jobs:
           tags: |
             banzo12/devflow:latest
             banzo12/devflow:${{ github.sha }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to EC2 over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
+            echo "Pulling latest image..."
+            docker pull banzo12/devflow:latest
+
+            echo "Stopping and removing old container if it exists..."
+            docker stop devflow-app 2>/dev/null || true
+            docker rm devflow-app 2>/dev/null || true
+
+            echo "Starting new container..."
+            docker run -d \
+              --name devflow-app \
+              --restart unless-stopped \
+              -p 3000:3000 \
+              banzo12/devflow:latest
+
+            echo "Waiting for container to be ready..."
+            sleep 3
+
+            echo "Verifying container is running..."
+            docker ps --filter name=devflow-app
+
+            echo "Smoke test against the running container..."
+            curl --fail --silent http://localhost:3000 | head -c 200
+            echo ""
+            echo "Deploy complete."
